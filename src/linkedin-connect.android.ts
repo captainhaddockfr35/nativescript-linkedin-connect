@@ -1,5 +1,6 @@
-import { Common } from './linkedin-connect.common';
 
+import { Common } from './linkedin-connect.common';
+import * as app from 'tns-core-modules/application';
 
 /// <reference path="android-declarations.d.ts"/>
 
@@ -1564,8 +1565,35 @@ declare module com {
 //com.android.volley.toolbox.JsonRequest:1
 //com.android.volley.toolbox.RequestFuture:1
 
+class MyAuthListener extends com.linkedin.platform.listeners.AuthListener {
+
+	constructor(){
+		super();
+	}
+
+	public onAuthSuccess() : void {
+		let context = app.android.context;
+		console.log("ON EST AUTHENTIFIÉ ");
+		alert(com.linkedin.platform.LISessionManager.getInstance(context).getSession().getAccessToken());
+	}
+
+	public onAuthError(error : com.linkedin.platform.errors.LIAuthError) : void {
+		console.log("Erreur !");
+	}
+}
 
 
 export class LinkedinConnect extends Common {
 
+	constructor(){
+		super();
+		let context = app.android.context;
+		//com.linkedin.platform.LISessionManager.getInstance(context).init(context, LinkedinConnect.buildScope(), new MyAuthListener(), true);
+	}
+
+	private static buildScope() : com.linkedin.platform.utils.Scope {
+		return com.linkedin.platform.utils.Scope.build(new Array(com.linkedin.platform.utils.Scope.R_BASICPROFILE, com.linkedin.platform.utils.Scope.R_EMAILADDRESS));
+	}
 }
+
+
